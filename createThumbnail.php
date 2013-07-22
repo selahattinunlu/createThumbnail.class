@@ -1,81 +1,99 @@
-<?php 
+﻿<?php 
 
 /**
 * @package createThumbnail Class
 * @author Selahattin Ünlü 
 * @link http://www.blogkeyf.com
 *
+* Translated by Vedat Kökmen
 */
 
 class createThumbnail{
 
 	/**
-	* $_FILES['xxxx'] değerinin ne olduğunu belirtir
+	* Tr - $_FILES['xxxx'] defines the value
+	* En - 
 	*/
 	public $image;
 
 	/**
-	* Uploada izin verilen uzantılar dizisi
+	* Tr - Uploada izin verilen uzantılar dizisi  
+	* En - Extension series which allowed to upload
 	*/
 	public $extensions = array( 'jpeg', 'jpg', 'png', 'gif' );
 
 	/**
-	* Upload edilen resmin uzantısı
+	* Tr - Upload edilen resmin uzantısı
+	* En - The extension of uploaded pic
 	*/
 	public $extension;
 
 	/**
-	* Upload edilen resmin orjinal adı
+	* Tr - Upload edilen resmin orjinal adı
+	* En - The original name of uploaded pic
 	*/
 	public $imageName;
 
 	/**
-	* Upload edilen resmin yeni adı
+	* Tr - Upload edilen resmin yeni adı
+	* En - New name of uploaded pic
 	*/
 	public $imageNewName = '' ;
 
 	/**
-	* Upload edilen resmin yeni dizini
+	* Tr - Upload edilen resmin yeni dizini
+	* En - New directory of uploaded pic 
 	*/
 	public $imageDir = '' ;
 
 	/**
-	* Kontrol sonuçlarının aktarıldığı değişken
+	* Tr - Kontrol sonuçlarının aktarıldığı değişken
+	* En - Variable that control results transfered
 	*/
 	public $control;
 
-	/**
-	* Uzantı hatası
+	/** Directory error
+	* Tr - Uzantı hatası
+	* En - Extension Error
 	*/
 	public $extensionError 	= 'Sadece jpg, png ve gif formatında resimler yükleyebilirsiniz.';
 
-	/**
-	* Upload hatası
+	/** 
+	* Tr - Upload hatası
+	* En - Upload error 
 	*/
 	public $uploadError 	= 'Resim yüklenirken bir sorun oluştu.';
 
 	/**
-	* Taşıma hatası
+	* Tr - Taşıma hatası
+	* En - Transport error 
 	*/
 	public $moveUploadError = 'Resim yüklenirken bir sorun oluştu.';
 
-	/**
-	* Hata Mesajlarını bir değişkende topluyoruz
-	*
+	/** We are collecting the error messages
+	* Tr - Hata Mesajlarını bir değişkende topluyoruz
+	* En - We are collecting the error messages in a variable
 	*/
 	public $error = '';
 
 	/**
-	* Php Hata Mesajları
-	* Default olarak şuanda hatalar gizlenmektedir.
-	* Eğer kritik hataların gösterilmesini istiyorsanız değişkenin değerini E_ALL olarak değiştirebilirsiniz.
+	* Tr - Php Hata Mesajları
+	* 	   Default olarak şuanda hatalar gizlenmektedir.
+	*      Eğer kritik hataların gösterilmesini istiyorsanız değişkenin değerini 
+	*      E_ALL olarak değiştirebilirsiniz.
+	* 
+	* En - Php Error Messages
+	*	   Errors hiding as default currently 
+	*	   If  you like to see the critic errors you can change the value of variable as E_ALL
 	*/
 	public $phpError = 0;
 
 
 	/**
-	* Başlangıç fonksiyonu
-	* $_FILES['xdeger'] $image değişkenine aktarılır
+	* Tr - Kurucu Fonksiyon
+	*      $_FILES['deger'] $image değişkenine aktarılır
+	* 
+	* En - Creator Function
 	*/
 	public function __construct( $image ){
 
@@ -83,18 +101,23 @@ class createThumbnail{
 
 		$this->image = $image;
 
-		// Resmin uzantısı
+		// Resmin uzantısı - Extension of pic
 		$this->extension = @end( explode( '.', $this->image['name'] ) );
 
 	}
 
 	/**
-	* Uzantı kontrolü:
-	* Yüklenen dosya uzantısı $extensions dizisinde belirtilen uzantılardan farklıysa hata değeri döndürülür.
+	* Tr - Uzantı kontrolü:
+	*      Yüklenen dosya uzantısı $extensions dizisinde belirtilen uzantılardan 
+	*      farklıysa hata değeri döndürülür.
+	* 
+	* En -  Extension Control
+	*       If uploaded file extension is different than defined extensions than $extension
+ 	*       directory  error value returns.	
 	*/
 	public function extensionControl(){
 
-		// Uzantı kontrolü
+		// Uzantı kontrolü - Extension control
 		if( in_array( $this->extension, $this->extensions ) ){
 			$this->control = true;
 		}else{
@@ -107,13 +130,17 @@ class createThumbnail{
 
 
 	/**
-	* Upload kontrolü
-	* Bir önceki kontrolde hata yoksa işlem devam eder.
-	* Resmin upload işleminin başarılı olup olmadığını kontrol eder.
-	*/
+	* Tr - Upload kontrolü
+	* 	   Bir önceki kontrolde hata yoksa işlem devam eder.
+	* 	   Resmin upload işleminin başarılı olup olmadığını kontrol eder.
+	* 
+	* En - Upload control
+	*	   If there is no error in previous control the process continues.	
+	*	   It controls the upload process if it's successful.
+	*/	   
 	public function isUpload(){
 
-		// Upload Kontrolü
+		// Upload Kontrolü - Upload Control
 		if( $this->control == true ){
 			if( is_uploaded_file( $this->image['tmp_name'] ) ){
 				$this->control = true;
@@ -127,9 +154,10 @@ class createThumbnail{
 	}
 
 	/**
-	* Resime yeni isim atıyoruz
-	*
-	* @param $name; Resmin yeni adını belirlediğimiz parametre
+	* Tr - Resime yeni isim atıyoruz
+	* En - Assinging the new name of pic
+	* 
+	* @param $name;
 	* @example 'yeniresim.jpg'
 	*/
 	public function newName( $name ){
@@ -139,16 +167,17 @@ class createThumbnail{
 	}
 
 	/**
-	* Upload edilen resmi taşıma
-	*
-	* @param $save; Resmin taşınacağı dizin
+	* Tr - Upload edilen resmi taşıma
+	* En - Transporting uploaded pic
+	* @param $save;
 	* @example 'upload/'
 	*/
 	public function moveUpload( $save ){
 
 		if( $this->control == true ){
 
-			// Belirtilen klasör bulunamazsa oluşturuyoruz
+			// Tr - Belirtilen klasör bulunamazsa oluşturuyoruz
+			// En - If file extension won't find we create
 			if( !file_exists( $save ) ){
 				mkdir( $save );
 			}
@@ -171,26 +200,28 @@ class createThumbnail{
 
 
 	/**
-	* Thumbnail resim oluşturma
+	* Tr - Thumbnail resim oluşturma
 	* @author Alex (Phpacademy)
 	* @link http://www.phpacademy.org
-	* @param $save; Kaydedilmek istenen dizin
-	* @param $name; Küçük resmin adı
+	* @param $save; (Tr - Kaydedilmek istenen dizin) (En - The directory that wanted to save)
+	* @param $name; (Tr - Küçük resmin adı) (En - The name of  thumbnail)
 	* @example 'kucuk_resim.jpg'
-	* @param $width; Küçük resmin genişliği
-	* @param $height; Küçük resmin yüksekliği
+	* @param $width;
+	* @param $height;
 	*/
 	function create_thumbnail( $save, $name, $width, $height ){
 
 		if( $this->control == true ){
-			// Kaydedilmek istenen dizin yoksa oluşturuyoruz
+			// Tr - Kaydedilmek istenen dizin yoksa oluşturuyoruz
+			// En - We create the directory if there isn't. 
 			if( !file_exists( $save ) ){
 				mkdir( $save );
 			}
 
 			$save = $save . $name;
 
-			// Kaynak resmin tam yolunu belirtiyoruz.
+			// Tr - Kaynak resmin tam yolunu belirtiyoruz.
+			// En - We defining exactly path of pic 
 			$path = $this->imageDir . $this->imageNewName;
 
 			$info = getimagesize( $path );
@@ -242,8 +273,10 @@ class createThumbnail{
 	}
 
 	/**
-	* Tüm işlem başarıyla tamamlandığında ekranda yazacak olan cümle
-	* @param $sentence; Yazmasını istediğiniz cümle
+	* Tr - Tüm işlem başarıyla tamamlandığında ekranda yazacak olan cümle
+	* En - The sentence that print on screen when all process is successful. 
+	* @param $sentence;
+	* @example 'Resim başarıyla yüklendi!';
 	*/
 	public function result( $sentence ){
 		if( $this->control == true ){
