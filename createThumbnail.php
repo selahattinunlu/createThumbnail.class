@@ -1,14 +1,15 @@
 ﻿<?php 
 
 /**
-* @package createThumbnail Class
+* @package - createThumbnail Class v1.1
 * @author Selahattin Ünlü 
 * @link http://www.blogkeyf.com
 *
 * Translated by Vedat Kökmen
 */
 
-class createThumbnail{
+class createThumbnail
+{
 
 	/**
 	* Tr - $_FILES['xxxx'] defines the value
@@ -20,7 +21,7 @@ class createThumbnail{
 	* Tr - Uploada izin verilen uzantılar dizisi  
 	* En - Extension series which allowed to upload
 	*/
-	public $extensions = array( 'jpeg', 'jpg', 'png', 'gif' );
+	public $extensions = array('jpeg', 'jpg', 'png', 'gif');
 
 	/**
 	* Tr - Upload edilen resmin uzantısı
@@ -38,13 +39,13 @@ class createThumbnail{
 	* Tr - Upload edilen resmin yeni adı
 	* En - New name of uploaded pic
 	*/
-	public $imageNewName = '' ;
+	public $imageNewName = '';
 
 	/**
 	* Tr - Upload edilen resmin yeni dizini
 	* En - New directory of uploaded pic 
 	*/
-	public $imageDir = '' ;
+	public $imageDir = '';
 
 	/**
 	* Tr - Kontrol sonuçlarının aktarıldığı değişken
@@ -88,21 +89,57 @@ class createThumbnail{
 	*/
 	public $phpError = 0;
 
+	/**
+	 * Tr - $_FILES['image']['name']
+	 * 		değerini atadığımız değişken
+	 * 
+	 * En -
+	 */ 
+	public $files_image_name;
 
 	/**
-	* Tr - Kurucu Fonksiyon
-	*      $_FILES['deger'] $image değişkenine aktarılır
-	* 
-	* En - Creator Function
-	*/
-	public function __construct( $image ){
+	 * Tr - $_FILES['image']['tmp_name']
+	 * 		değerini atadığımız değişken
+	 * 
+	 * En -
+	 */ 
+	public $files_image_tmp_name;
 
-		error_reporting( $this->phpError );
+
+	/**
+	* Tr - Başlangıç Fonksiyonu
+	*      $_FILES['deger'] $image değişkenine aktarılır
+	* 	   
+	* 	   Döngü halinde çoklu yüklemeler için $i parametresi kullanılır.
+	* 	   Aşağıdaki örneği inceleyebilirsiniz:
+	* 
+	* 	   @example
+	* 	   $total_image = count($_FILES['image']['name']);
+	* 	   for($i = 0; $i < $total_image; $i++)
+	*		{
+	*			$ct->start($_FILES['image'], $i);
+	*			$ct->extensionControl();
+	*			$ct->isUpload();
+	*				$new_name = rand(0,999).time().'.jpg';
+	*			$ct->newName($new_name);
+	*			$ct->moveUpload('images/products/');
+	*			$ct->create_thumbnail('images/products/thumb/', 'thumb.jpg', 300, 300 );
+	* 			$ct->result('SUCCESS MESSAGE');
+	*		}	
+	* 
+	* En - Start Function
+	*/
+	public function start($image, $i=NULL)
+	{
+
+		error_reporting($this->phpError);
 
 		$this->image = $image;
+		$this->files_image_name = (isset($i)) ? $this->image['name'][$i] : $this->image['name'];
+		$this->files_image_tmp_name = (isset($i)) ? $this->image['tmp_name'][$i] : $this->image['tmp_name'];
 
 		// Resmin uzantısı - Extension of pic
-		$this->extension = @end( explode( '.', $this->image['name'] ) );
+		$this->extension = @end(explode('.', $this->files_image_name));
 
 	}
 
@@ -115,13 +152,16 @@ class createThumbnail{
 	*       If uploaded file extension is different than defined extensions than $extension
  	*       directory  error value returns.	
 	*/
-	public function extensionControl(){
-
+	public function extensionControl()
+	{
 		// Uzantı kontrolü - Extension control
-		if( in_array( $this->extension, $this->extensions ) ){
-			$this->control = true;
-		}else{
-			$this->control = false;
+		if(in_array($this->extension, $this->extensions))
+		{
+			$this->control = TRUE;
+		}
+		else
+		{
+			$this->control = FALSE;
 			$this->error = $this->extensionError;
 			echo $this->error;
 		}
@@ -138,14 +178,19 @@ class createThumbnail{
 	*	   If there is no error in previous control the process continues.	
 	*	   It controls the upload process if it's successful.
 	*/	   
-	public function isUpload(){
+	public function isUpload()
+	{
 
 		// Upload Kontrolü - Upload Control
-		if( $this->control == true ){
-			if( is_uploaded_file( $this->image['tmp_name'] ) ){
-				$this->control = true;
-			}else{
-				$this->control = false;
+		if($this->control == TRUE)
+		{
+			if(is_uploaded_file($this->files_image_tmp_name))
+			{
+				$this->control = TRUE;
+			}
+			else
+			{
+				$this->control = FALSE;
 				$this->error = $this->uploadError;
 				echo $this->error;
 			}
@@ -160,10 +205,9 @@ class createThumbnail{
 	* @param $name;
 	* @example 'yeniresim.jpg'
 	*/
-	public function newName( $name ){
-
+	public function newName($name)
+	{
 		$this->imageNewName = $name;
-
 	}
 
 	/**
@@ -172,23 +216,29 @@ class createThumbnail{
 	* @param $save;
 	* @example 'upload/'
 	*/
-	public function moveUpload( $save ){
+	public function moveUpload($save)
+	{
 
-		if( $this->control == true ){
-
+		if($this->control == TRUE)
+		{
 			// Tr - Belirtilen klasör bulunamazsa oluşturuyoruz
 			// En - If file extension won't find we create
-			if( !file_exists( $save ) ){
-				mkdir( $save );
+			if( ! file_exists($save))
+			{
+				mkdir($save);
 			}
 
-			if( $this->imageNewName != '' ){
+			if($this->imageNewName != '')
+			{
 				$this->imageDir = $save;
-				$move = $this->imageDir . $this->imageNewName;
-				if( move_uploaded_file( $this->image['tmp_name'], $move  ) ){
-					$this->control = true;
-				}else{
-					$this->control = false;
+				$move = $this->imageDir.$this->imageNewName;
+				if(move_uploaded_file($this->files_image_tmp_name, $move))
+				{
+					$this->control = TRUE;
+				}
+				else
+				{
+					$this->control = FALSE;
 					$this->error = $this->moveUploadError;
 					echo $this->error;
 				}
@@ -209,64 +259,82 @@ class createThumbnail{
 	* @param $width;
 	* @param $height;
 	*/
-	function create_thumbnail( $save, $name, $width, $height ){
+	function create_thumbnail($save, $name, $width, $height)
+	{
 
-		if( $this->control == true ){
+		if($this->control == TRUE)
+		{
 			// Tr - Kaydedilmek istenen dizin yoksa oluşturuyoruz
 			// En - We create the directory if there isn't. 
-			if( !file_exists( $save ) ){
-				mkdir( $save );
+			if( ! file_exists($save))
+			{
+				mkdir($save);
 			}
 
-			$save = $save . $name;
+			$save = $save.$name;
 
 			// Tr - Kaynak resmin tam yolunu belirtiyoruz.
 			// En - We defining exactly path of pic 
-			$path = $this->imageDir . $this->imageNewName;
+			$path = $this->imageDir.$this->imageNewName;
 
-			$info = getimagesize( $path );
-			$size = array( $info[0], $info[1] );
+			$info = getimagesize($path);
+			$size = array($info[0], $info[1]);
 
-			if( $info['mime'] == 'image/jpeg' ){
-				$src = imagecreatefromjpeg( $path );
-			}else if( $info['mime'] == 'image/gif' ){
-				$src = imagecreatefromgif( $path );
-			}else if( $info['mime'] == 'image/png' ){
-				$src = imagecreatefrompng( $path );
-			}else{
-				return false;
+			if($info['mime'] == 'image/jpeg')
+			{
+				$src = imagecreatefromjpeg($path);
+			}
+			else if($info['mime'] == 'image/gif')
+			{
+				$src = imagecreatefromgif($path);
+			}
+			else if($info['mime'] == 'image/png')
+			{
+				$src = imagecreatefrompng($path);
+			}
+			else
+			{
+				return FALSE;
 			}
 
-			$thumb = imagecreatetruecolor( $width, $height );
+			$thumb = imagecreatetruecolor($width, $height);
 
 			$src_aspect = $size[0] / $size[1];
 			$thumb_aspect = $width / $height;
 
-			if( $src_aspect < $thumb_aspect ){
+			if($src_aspect < $thumb_aspect)
+			{
 				// narrover
 				$scale = $width / $size[0];
 				$new_size = array( $width, $width/$src_aspect );
 				$src_pos = array( 0, ($size[1] * $scale - $height) / $scale / 2 );
-			}else if( $src_aspect > $thumb_aspect ){
+			}
+			else if($src_aspect > $thumb_aspect)
+			{
 				// wider
 				$scale = $height / $size[1];
-				$new_size = array( $height * $src_aspect, $height );
-				$src_pos  = array( ($size[0] * $scale - $width) / $scale / 2, 0 );
-			}else{
+				$new_size = array($height * $src_aspect, $height);
+				$src_pos  = array(($size[0] * $scale - $width) / $scale / 2, 0);
+			}
+			else
+			{
 				// some shape
-				$new_size = array( $width, $height );
-				$src_pos = array( 0, 0 );
+				$new_size = array($width, $height);
+				$src_pos = array(0, 0);
 			}
 
-			$new_size[0] = max( $new_size[0], 1 );
-			$new_size[1] = max( $new_size[1], 1 );
+			$new_size[0] = max($new_size[0], 1);
+			$new_size[1] = max($new_size[1], 1);
 
-			imagecopyresampled( $thumb, $src, 0, 0, $src_pos[0], $src_pos[1], $new_size[0], $new_size[1], $size[0], $size[1] );
+			imagecopyresampled($thumb, $src, 0, 0, $src_pos[0], $src_pos[1], $new_size[0], $new_size[1], $size[0], $size[1]);
 
-			if( $save === false ){
-				return imagejpeg( $thumb );
-			}else{
-				return imagejpeg( $thumb, $save );
+			if($save === FALSE)
+			{
+				return imagejpeg($thumb);
+			}
+			else
+			{
+				return imagejpeg($thumb, $save);
 			}
 		}
 
@@ -278,12 +346,12 @@ class createThumbnail{
 	* @param $sentence;
 	* @example 'Resim başarıyla yüklendi!';
 	*/
-	public function result( $sentence ){
-		if( $this->control == true ){
+	public function result($sentence)
+	{
+		if($this->control == TRUE)
+		{
 			echo $sentence;
 		}
 	} 
 
 }
-
-?>

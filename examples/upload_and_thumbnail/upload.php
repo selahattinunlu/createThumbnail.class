@@ -2,8 +2,9 @@
 
 require('../../createThumbnail.php');
 
-// Sınıfımızı çağırırken Formdaki input'un name alanını belirtiyoruz
-$ct = new createThumbnail($_FILES['image']);
+$ct = new createThumbnail();
+
+$ct->start($_FILES['image']);
 
 // Uzantı kontrolü
 $ct->extensionControl();
